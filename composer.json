@@ -1,0 +1,26 @@
+{
+    "name":"wittiws/witti-project-utils",
+    "type":"library",
+    "description":"Command-line project-oriented utilities.",
+    "keywords":[
+        "converter"
+    ],
+    "homepage":"http://www.witti.ws/project/witti-project-utils",
+    "license":"MIT",
+    "authors":[
+        {
+            "name":"Greg Payne",
+            "email":"greg.payne@gmail.com"
+        }
+    ],
+    "require":{
+        "php":">=5.3.3",
+        "drush/drush":"dev-master-fulltest"
+    },
+    "autoload":{
+        "psr-4":{
+            "Witti\\Project\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
