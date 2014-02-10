@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+SELF_DIRNAME="`dirname -- "$0"`"
+ROOT_DIRNAME="`dirname -- "$SELF_DIRNAME"`"
+
+case "$1" in
+  build)
+    shift
+    DRUSH_CMD=witti-project-build
+    ;;
+  *)
+    DRUSH_CMD=witti-project-help
+    ;;
+esac
+set -- "$DRUSH_CMD" $@
+
+exec "$ROOT_DIRNAME/vendor/bin/drush" --root="$ROOT_DIRNAME" --include="$ROOT_DIRNAME" "$@"
