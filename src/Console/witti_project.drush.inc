@@ -1,4 +1,13 @@
 <?php
+/*
+ * This file is part of the Witti Project Utils package.
+ *
+ * (c) Greg Payne
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 /**
  * Implementation of hook_drush_command().
  *
@@ -43,9 +52,11 @@ function drush_witti_project_build($build_dir = NULL) {
   }
 
   // Attempt to apply the license block.
-  $lb = new \Witti\Project\Builder\LicenseBlockIterator($build_dir);
-  foreach ($lb as $path) {
-    drush_print($path);
+  $lb = new \Witti\Project\Builder\Helper\FileLicenseBlock($build_dir);
+  $php_files = new \Witti\Project\Builder\Files\BuilderPhpFiles($build_dir);
+  foreach ($php_files as $php_file) {
+    drush_print($php_file);
+    $lb->parseFile($php_file)->update();
   }
 }
 

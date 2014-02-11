@@ -1,7 +1,16 @@
 <?php
-namespace Witti\Project\Builder;
+/*
+ * This file is part of the Witti Project Utils package.
+ *
+ * (c) Greg Payne
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-class LicenseBlockIterator extends \FilterIterator {
+namespace Witti\Project\Builder\Files;
+
+class BuilderPhpFiles extends \FilterIterator {
   protected $root;
   protected $stats = array(
     'added' => 0,
@@ -25,11 +34,4 @@ class LicenseBlockIterator extends \FilterIterator {
     return TRUE;
   }
 
-  public function update() {
-    // Apply the current license block.
-  }
-
-  public function getParsedFile() {
-    // Parse the file into three pieces: opening, license, body
-  }
 }
