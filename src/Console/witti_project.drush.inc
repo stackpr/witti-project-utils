@@ -23,6 +23,25 @@ function witti_project_drush_command() {
   $items['witti-project-build'] = array(
     'description' => 'Build a witti project.',
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
+    'arguments' => array(
+      'project_dir' => 'The path of the project directory to build.',
+    ),
+  );
+  $items['witti-project-replace'] = array(
+    'description' => 'Replace text recursively through a project.',
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
+    'arguments' => array(
+      'root_dir' => 'The path of the root directory in which to perform replacements (defaults to current directory).',
+    ),
+    'options' => array(
+    //       'include' => array(
+    //         'description' => 'Regular expression for which files to include.',
+    //         'example-value' => '/php$/',
+    //       ),
+    ),
+    'examples' => array(
+      'Simple replacement in current directory' => 'witti-project replace "/old/" "new"',
+    ),
   );
   $items['witti-project-help'] = array(
     'description' => 'Display witti project help.',
@@ -53,11 +72,26 @@ function drush_witti_project_build($build_dir = NULL) {
 
   // Attempt to apply the license block.
   $lb = new \Witti\Project\Builder\Helper\FileLicenseBlock($build_dir);
-  $php_files = new \Witti\Project\Builder\Files\BuilderPhpFiles($build_dir);
+  $php_files = new \Witti\Project\Builder\Files\BuilderFiles($build_dir);
   foreach ($php_files as $php_file) {
     drush_print($php_file);
     $lb->parseFile($php_file)->update();
   }
+}
+
+function drush_witti_project_replace($match = '', $replace = '', $root_dir = NULL) {
+  if ($match === '') {
+    drush_print("USAGE: witti-project replace '@preg@' 'replace' [root_dir|.]");
+    return;
+  }
+  if (!isset($root_dir)) {
+    $root_dir = drush_cwd();
+  }
+  elseif ($root_dir{0} !== '/') {
+    $root_dir = drush_cwd() . '/' . $root_dir;
+  }
+
+  drush_print("Placeholder for replacing text throughout a folder.");
 }
 
 function drush_witti_project_help($help_topic = NULL) {
