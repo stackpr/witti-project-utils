@@ -15,6 +15,7 @@
     ],
     "require":{
         "php":">=5.3.3",
+        "wittiws/witti-utils":"dev-master",
         "drush/drush":"dev-master-fulltest"
     },
     "autoload":{

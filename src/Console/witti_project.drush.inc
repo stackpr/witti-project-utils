@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+use Witti\Utils\ArgValidate;
+
 /**
  * Implementation of hook_drush_command().
  *
@@ -34,10 +36,18 @@ function witti_project_drush_command() {
       'root_dir' => 'The path of the root directory in which to perform replacements (defaults to current directory).',
     ),
     'options' => array(
-    //       'include' => array(
-    //         'description' => 'Regular expression for which files to include.',
-    //         'example-value' => '/php$/',
-    //       ),
+      'ext' => array(
+        'description' => 'Pipe-delimited list of file extensions to consider.',
+        'example-value' => 'php|inc (default)',
+      ),
+      'include' => array(
+        'description' => 'Regular expression for which files to include.',
+        'example-value' => '/php$/',
+      ),
+      // Global options that should be shown for usability
+      'simulate' => array(
+        'description' => 'Simulate the replacement but do not make the replacement.',
+      ),
     ),
     'examples' => array(
       'Simple replacement in current directory' => 'witti-project replace "/old/" "new"',
@@ -91,6 +101,17 @@ function drush_witti_project_replace($match = '', $replace = '', $root_dir = NUL
     $root_dir = drush_cwd() . '/' . $root_dir;
   }
 
+  try {
+    $match = ArgValidate::getRegexPattern($match);
+  } catch (\Exception $e) {
+    drush_print(dt('Error: ') . $e->getMessage());
+    return;
+  }
+
+  drush_print("Simulate: "
+    . var_export(drush_get_context('DRUSH_SIMULATE'), 1));
+  drush_print("Verbose: "
+    . var_export(drush_get_context('DRUSH_VERBOSE'), 1));
   drush_print("Placeholder for replacing text throughout a folder.");
 }
 
