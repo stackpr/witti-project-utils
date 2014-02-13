@@ -10,7 +10,7 @@
 
 namespace Witti\Project\Builder\Files;
 
-class BuilderPhpFiles extends \FilterIterator {
+class BuilderFiles extends \FilterIterator {
   protected $root;
   protected $stats = array(
     'added' => 0,
