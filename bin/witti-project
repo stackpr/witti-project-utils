@@ -4,9 +4,13 @@ SELF_DIRNAME="`dirname -- "$SELF_PATH"`"
 ROOT_DIRNAME="`dirname -- "$SELF_DIRNAME"`"
 
 case "$1" in
-  build)
+  witti-project-*)
+    DRUSH_CMD="$1"
     shift
-    DRUSH_CMD=witti-project-build
+    ;;
+  ????*)
+    DRUSH_CMD="witti-project-$1"
+    shift
     ;;
   *)
     DRUSH_CMD=witti-project-help
