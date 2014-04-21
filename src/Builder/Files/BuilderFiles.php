@@ -21,8 +21,9 @@ class BuilderFiles extends \FilterIterator {
     $this->root = $root;
     $it = new \RecursiveDirectoryIterator($root, \FilesystemIterator::SKIP_DOTS);
     $it = new \RecursiveIteratorIterator($it);
-    $it = new \RegexIterator($it, "@\.(?:$ext)$@s");
-    $regex = '';
+    if (!empty($ext)) {
+      $it = new \RegexIterator($it, "@\.(?:$ext)$@s");
+    }
     parent::__construct($it);
   }
 
