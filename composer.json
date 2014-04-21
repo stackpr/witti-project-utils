@@ -15,6 +15,7 @@
     ],
     "require":{
         "php":">=5.3.3",
+        "wittiws/splash":"dev-master",
         "wittiws/witti-utils":"dev-master",
         "symfony/console":"2.3.*@dev",
         "drush/drush":"dev-master-fulltest"

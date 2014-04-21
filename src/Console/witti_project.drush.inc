@@ -9,6 +9,8 @@
  */
 
 use Witti\Utils\ArgValidate;
+use Witti\Project\Console\Helper;
+use Splash\Splash;
 
 /**
  * Implementation of hook_drush_command().
@@ -36,17 +38,32 @@ function witti_project_drush_command() {
       'root_dir' => 'The path of the root directory in which to perform replacements (defaults to current directory).',
     ),
     'options' => array(
+      'escape' => array(
+        'description' => 'Convert special chars (\\n,\\r,\\t) in both regex and replacement.',
+        'example-value' => 'nrt',
+      ),
+      'exclude-files' => array(
+        'description' => 'Regular expression for which files to exclude.',
+        'example-value' => '/Test\.php$/',
+      ),
       'ext' => array(
         'description' => 'Pipe-delimited list of file extensions to consider.',
         'example-value' => 'php|inc (default)',
       ),
-      'include' => array(
+      'include-files' => array(
         'description' => 'Regular expression for which files to include.',
         'example-value' => '/php$/',
+      ),
+      'progress' => array(
+        'description' => 'Display progress as files are checked.',
+      ),
+      'stats' => array(
+        'description' => 'Display replacement summary after completing the replacements.',
       ),
       // Global options that should be shown for usability
       'simulate' => array(
         'description' => 'Simulate the replacement but do not make the replacement.',
+        'example-value' => 'y',
       ),
     ),
     'examples' => array(
@@ -108,11 +125,92 @@ function drush_witti_project_replace($match = '', $replace = '', $root_dir = NUL
     return;
   }
 
-  drush_print("Simulate: "
-    . var_export(drush_get_context('DRUSH_SIMULATE'), 1));
-  drush_print("Verbose: "
-    . var_export(drush_get_context('DRUSH_VERBOSE'), 1));
-  drush_print("Placeholder for replacing text throughout a folder.");
+  // Build the list of files.
+  $ext = trim(drush_get_option('ext'));
+  $files = new \Witti\Project\Builder\Files\BuilderFiles($root_dir, $ext);
+  $files = Splash::go()->append($files);
+
+  // Apply additional options.
+  $include = drush_get_option('include-files');
+  if (strlen($include) >= 3) {
+    $files = $files->regex($include);
+  }
+  $exclude = drush_get_option('exclude-files');
+  if (strlen($exclude) >= 3) {
+    $files = $files->inverseregex($exclude);
+  }
+  $files = $files->unique();
+
+  // Adjust the handling of whitespace.
+  $chars = drush_get_option('escape', 'nrt');
+  foreach (str_split($chars, 1) as $char) {
+    $char = "\\$char";
+    $escaped = eval("return \"$char\";");
+    $match = str_replace($char, $escaped, $match);
+    $replace = str_replace($char, $escaped, $replace);
+  }
+
+  // Initialize the stats.
+  $stats = array(
+    'files.total' => array(
+      'title' => 'Total Files',
+      'stat' => 0,
+    ),
+    'files.match' => array(
+      'title' => 'Matching Files',
+      'stat' => 0,
+    ),
+    'replacements' => array(
+      'title' => 'Total Replacements',
+      'stat' => 0,
+    ),
+  );
+
+  // Build the progress meter.
+  $progress = NULL;
+  $show_progress = drush_get_option('progress')
+    && !drush_get_context('DRUSH_VERBOSE');
+  if ($show_progress) {
+    $progress = Helper::getProgressHelper($files->count());
+  }
+  foreach ($files as $file) {
+    $stats['files.total']['stat']++;
+    $msg = '';
+
+    // Open the file and perform replacements.
+    $count = 0;
+    $dat = file_get_contents($file);
+    $dat = preg_replace($match, $replace, $dat, -1, $count);
+    if ($count != 0) {
+      if (!drush_get_context('DRUSH_SIMULATE')) {
+        file_put_contents($file, $dat);
+      }
+      $stats['files.match']['stat']++;
+      $stats['replacements']['stat'] += $count;
+    }
+
+    // Progress update.
+    if (isset($progress)) {
+      $progress->advance();
+    }
+    elseif (drush_get_context('DRUSH_VERBOSE')) {
+      drush_print($file);
+      if (!empty($msg)) {
+        drush_print($msg, 3);
+      }
+    }
+  }
+  if (isset($progress)) {
+    $progress->finish();
+  }
+
+
+  $show_stats = drush_get_option('stats');
+  if ($show_stats) {
+    foreach ($stats as $stat) {
+      drush_print(sprintf('%20s: %s', $stat['title'], $stat['stat']));
+    }
+  }
 }
 
 function drush_witti_project_help($help_topic = NULL) {
