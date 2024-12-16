@@ -1,29 +1,29 @@
 {
-    "name":"wittiws/witti-project-utils",
-    "type":"library",
-    "description":"Command-line project-oriented utilities.",
-    "keywords":[
-        "converter"
-    ],
-    "homepage":"http://www.witti.ws/project/witti-project-utils",
-    "license":"MIT",
-    "authors":[
-        {
-            "name":"Greg Payne",
-            "email":"greg.payne@gmail.com"
-        }
-    ],
-    "require":{
-        "php":">=5.3.3",
-        "wittiws/splash":"dev-master",
-        "wittiws/witti-utils":"dev-master",
-        "symfony/console":"2.3.*@dev",
-        "drush/drush":"dev-master-fulltest"
-    },
-    "autoload":{
-        "psr-4":{
-            "Witti\\Project\\": "src/"
-        }
-    },
-    "minimum-stability": "dev"
+  "name": "wittiws/witti-project-utils",
+  "type": "library",
+  "description": "Command-line project-oriented utilities.",
+  "keywords": [
+    "converter"
+  ],
+  "homepage": "http://www.witti.ws/project/witti-project-utils",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Greg Payne",
+      "email": "greg.payne@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.3",
+    "wittiws/splash": "dev-master",
+    "wittiws/witti-utils": "dev-master",
+    "symfony/console": "2.*@dev",
+    "drush/drush": "8.x-dev"
+  },
+  "autoload": {
+    "psr-4": {
+      "Witti\\Project\\": "src/"
+    }
+  },
+  "minimum-stability": "dev"
 }

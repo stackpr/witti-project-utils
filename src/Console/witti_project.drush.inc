@@ -93,7 +93,7 @@ function drush_witti_project_build($build_dir = NULL) {
     drush_print("USAGE: witti-project build [build_dir]");
     return;
   }
-  if ($build_dir{0} !== '/') {
+  if ($build_dir[0] !== '/') {
     $build_dir = drush_cwd() . '/' . $build_dir;
   }
 
@@ -114,7 +114,7 @@ function drush_witti_project_replace($match = '', $replace = '', $root_dir = NUL
   if (!isset($root_dir)) {
     $root_dir = drush_cwd();
   }
-  elseif ($root_dir{0} !== '/') {
+  elseif ($root_dir[0] !== '/') {
     $root_dir = drush_cwd() . '/' . $root_dir;
   }
 
